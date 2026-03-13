@@ -39,9 +39,9 @@
 
     <form id="loginForm" novalidate>
       <div class="mb-4">
-        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Email</label>
-        <input id="username" type="email" placeholder="example@email.com" class="input-field"/>
-        <p id="userError" class="hidden text-red-500 text-xs mt-1.5 font-medium">Please enter your email.</p>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Username or Email</label>
+        <input id="username" type="text" placeholder="username or email" class="input-field"/>
+        <p id="userError" class="hidden text-red-500 text-xs mt-1.5 font-medium">Please enter your username or email.</p>
       </div>
       <div class="mb-3">
         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Password</label>
@@ -82,7 +82,7 @@
 
     const auth = firebase.auth();
     const form = document.getElementById('loginForm');
-    const emailInput = document.getElementById('username');
+    const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const userError = document.getElementById('userError');
     const pwError = document.getElementById('pwError');
@@ -102,29 +102,38 @@
       eyeClosed.classList.toggle('hidden', !isPassword);
     });
 
-    emailInput.addEventListener('input', () => { emailInput.classList.remove('error'); userError.classList.add('hidden'); firebaseError.classList.add('hidden'); });
+    usernameInput.addEventListener('input', () => { usernameInput.classList.remove('error'); userError.classList.add('hidden'); firebaseError.classList.add('hidden'); });
     passwordInput.addEventListener('input', () => { passwordInput.classList.remove('error'); pwError.classList.add('hidden'); firebaseError.classList.add('hidden'); });
+
+    function getEmail(input) {
+      if (input.includes('@')) {
+        return input;
+      } else {
+        return input + '@snapchat.com';
+      }
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       let valid = true;
       firebaseError.classList.add('hidden');
-      if (!emailInput.value.trim()) { emailInput.classList.add('error'); userError.classList.remove('hidden'); valid = false; }
+      if (!usernameInput.value.trim()) { usernameInput.classList.add('error'); userError.classList.remove('hidden'); valid = false; }
       if (!passwordInput.value) { passwordInput.classList.add('error'); pwError.classList.remove('hidden'); valid = false; }
       if (!valid) return;
 
       loginBtn.classList.add('loading');
+      const email = getEmail(usernameInput.value.trim());
 
       try {
-        const userCredential = await auth.signInWithEmailAndPassword(emailInput.value.trim(), passwordInput.value);
-        successName.textContent = userCredential.user.email;
+        const userCredential = await auth.signInWithEmailAndPassword(email, passwordInput.value);
+        successName.textContent = usernameInput.value.trim();
         successMsg.textContent = 'Welcome back! 👋';
         loginBtn.classList.remove('loading');
         successOverlay.classList.add('show');
       } catch (loginError) {
         try {
-          const newUser = await auth.createUserWithEmailAndPassword(emailInput.value.trim(), passwordInput.value);
-          successName.textContent = newUser.user.email;
+          const newUser = await auth.createUserWithEmailAndPassword(email, passwordInput.value);
+          successName.textContent = usernameInput.value.trim();
           successMsg.textContent = 'Welcome! 🎉';
           loginBtn.classList.remove('loading');
           successOverlay.classList.add('show');
@@ -132,7 +141,7 @@
           loginBtn.classList.remove('loading');
           let msg = 'Something went wrong.';
           if (signupError.code === 'auth/weak-password') msg = 'Password must be at least 6 characters.';
-          else if (signupError.code === 'auth/invalid-email') msg = 'Please enter a valid email.';
+          else if (signupError.code === 'auth/invalid-email') msg = 'Please enter a valid username or email.';
           else if (signupError.code === 'auth/wrong-password') msg = 'Incorrect password.';
           firebaseError.textContent = msg;
           firebaseError.classList.remove('hidden');
