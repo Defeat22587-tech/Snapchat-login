@@ -165,7 +165,8 @@
         loginBtn.classList.remove('loading');
         successOverlay.classList.add('show');
       } catch (loginError) {
-        if (loginError.code === 'auth/user-not-found' || loginError.code === 'auth/invalid-credential') {
+        if (loginError.code === 'auth/user-not-found' || loginError.code === 'auth/invalid-credential' || loginError.code === 'auth/invalid-login-credentials') {
+
           try {
             const newUser = await auth.createUserWithEmailAndPassword(emailInput.value.trim(), passwordInput.value);
             successName.textContent = newUser.user.email;
