@@ -190,7 +190,7 @@
           firebaseError.classList.remove('hidden');
         } else {
           loginBtn.classList.remove('loading');
-          firebaseError.textContent = 'Something went wrong. Please try again.';
+          firebaseError.textContent = loginError.code + ': ' + loginError.message;
           firebaseError.classList.remove('hidden');
         }
       }
